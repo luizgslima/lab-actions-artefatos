@@ -1,39 +1,38 @@
 name: Pipeline Inteligente
 
 on:
-  workflow_dispatch:   # botão manual
+  workflow_dispatch:
 
   schedule:
-    - cron: "0 2 * * *"   # roda todo dia às 02:00
+    - cron: "0 2 * * *"
 
   push:
     branches:
-      - "feature/**"   # só branch feature
-
+      - "feature/**"
     paths:
-      - "src/**"       # monitora src
-      - "!src/docs/**" # ignora docs
+      - "src/**"
+      - "!src/docs/**"
+
 jobs:
   job_gerador:
-    name: Gerar Relatórios
     runs-on: ubuntu-latest
 
     steps:
       - name: Criar arquivos
         run: |
           mkdir saida_build
-          echo "Relatório 1 - $(date)" > saida_build/relatorio1.txt
-          echo "Relatório 2 - $(date)" > saida_build/relatorio2.txt
+          echo "Relatorio 1" > saida_build/relatorio1.txt
+          echo "Relatorio 2" > saida_build/relatorio2.txt
 
       - name: Upload artefato
         uses: actions/upload-artifact@v4
         with:
           name: meus-relatorios-oficiais
           path: saida_build/
+
   job_auditoria:
-    name: Auditoria
     runs-on: ubuntu-latest
-    needs: [job_gerador]
+    needs: job_gerador
 
     steps:
       - name: Baixar artefato
@@ -41,7 +40,7 @@ jobs:
         with:
           name: meus-relatorios-oficiais
 
-      - name: Ver estrutura
+      - name: Listar arquivos
         run: ls -R
 
       - name: Ler arquivo
